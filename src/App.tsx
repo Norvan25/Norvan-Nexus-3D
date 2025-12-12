@@ -18,7 +18,7 @@ function App() {
   };
 
   return (
-    <div className="relative w-screen h-screen overflow-hidden bg-[#020410]">
+    <div className="relative w-screen h-[100dvh] overflow-hidden bg-[#020410]">
       {/* Subtle nebula fog effect */}
       <div className="absolute inset-0 bg-gradient-radial from-blue-950/10 via-transparent to-transparent pointer-events-none" />
 

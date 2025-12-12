@@ -30,10 +30,7 @@ export default function InputPill() {
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.5, type: 'spring', damping: 20 }}
-      style={{
-        bottom: 'max(1.5rem, env(safe-area-inset-bottom, 0px) + 0.5rem)'
-      }}
-      className="fixed left-1/2 transform -translate-x-1/2 w-[90%] max-w-[600px] h-14 z-50 flex items-center justify-between px-4 bg-[#0D1326]/80 backdrop-blur-xl rounded-full border border-white/10 shadow-[0_4px_20px_rgba(0,192,255,0.2)]"
+      className="fixed bottom-[max(1.5rem,env(safe-area-inset-bottom))] left-1/2 transform -translate-x-1/2 w-[90%] max-w-[600px] h-14 z-50 flex items-center justify-between px-4 bg-[#0D1326]/80 backdrop-blur-xl rounded-full border border-white/10 shadow-[0_4px_20px_rgba(0,192,255,0.2)]"
     >
       {/* Plus Button */}
       <button className="p-2 md:p-2 rounded-full bg-white/10 active:bg-white/20 md:hover:bg-white/20 transition-colors border border-white/20 touch-manipulation">
