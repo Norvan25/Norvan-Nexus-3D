@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion } from 'framer-motion';
 import { Plus, Mic, Activity } from 'lucide-react';
 
@@ -25,7 +26,11 @@ export default function InputPill() {
     }
   }, [text, isTyping]);
 
-  return (
+  const portalRoot = document.getElementById('input-portal');
+
+  if (!portalRoot) return null;
+
+  return createPortal(
     <motion.div
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
@@ -52,6 +57,7 @@ export default function InputPill() {
       <button className="p-2 md:p-2 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 active:from-cyan-500/30 active:to-blue-500/30 md:hover:from-cyan-500/30 md:hover:to-blue-500/30 transition-colors border border-cyan-400/30 touch-manipulation">
         <Mic className="w-4 h-4 md:w-5 md:h-5 text-cyan-300" />
       </button>
-    </motion.div>
+    </motion.div>,
+    portalRoot
   );
 }
