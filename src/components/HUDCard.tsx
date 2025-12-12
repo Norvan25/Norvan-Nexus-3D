@@ -204,14 +204,15 @@ export default function HUDCard({ node, onClose }: HUDCardProps) {
         </div>
       </motion.div>
 
-      {/* Mobile Floating Modal */}
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="md:hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md max-h-[60vh] overflow-y-auto pointer-events-auto z-[100]"
-      >
+      {/* Mobile Floating Modal - Centered Container */}
+      <div className="md:hidden fixed inset-0 flex items-center justify-center z-[100] pointer-events-none px-4">
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          className="w-full max-w-md max-h-[60vh] overflow-y-auto pointer-events-auto"
+        >
         <div className={`relative rounded-2xl border ${getBorderColor()} backdrop-blur-xl bg-[#0D1326]/95 shadow-2xl overflow-hidden`}>
           {/* Vertical Power Bar (for DIMENSION cards only) */}
           {node.group === 'DIMENSION' && (
@@ -331,7 +332,8 @@ export default function HUDCard({ node, onClose }: HUDCardProps) {
             )}
           </div>
         </div>
-      </motion.div>
+        </motion.div>
+      </div>
     </AnimatePresence>
   );
 }
