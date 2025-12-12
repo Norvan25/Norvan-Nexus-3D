@@ -210,16 +210,7 @@ export default function HUDCard({ node, onClose }: HUDCardProps) {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 100,
-          maxHeight: '60vh',
-          overflowY: 'auto',
-        }}
-        className="md:hidden w-[90%] max-w-md pointer-events-auto"
+        className="md:hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md max-h-[60vh] overflow-y-auto pointer-events-auto z-[100]"
       >
         <div className={`relative rounded-2xl border ${getBorderColor()} backdrop-blur-xl bg-[#0D1326]/95 shadow-2xl overflow-hidden`}>
           {/* Vertical Power Bar (for DIMENSION cards only) */}
