@@ -2,14 +2,14 @@ import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { Mic, MessageSquare, Rocket } from 'lucide-react';
 
-interface AnimatedButtonProps {
+interface ButtonSectionProps {
   icon: React.ReactNode;
   hints: string[];
   onClick?: () => void;
-  delay?: number;
+  isLast?: boolean;
 }
 
-const AnimatedButton = ({ icon, hints, onClick, delay = 0 }: AnimatedButtonProps) => {
+const ButtonSection = ({ icon, hints, onClick, isLast }: ButtonSectionProps) => {
   const [currentHintIndex, setCurrentHintIndex] = useState(0);
 
   useEffect(() => {
@@ -21,29 +21,22 @@ const AnimatedButton = ({ icon, hints, onClick, delay = 0 }: AnimatedButtonProps
   }, [hints.length]);
 
   return (
-    <motion.button
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.6 }}
+    <button
       onClick={onClick}
-      className="group relative px-6 py-3.5 bg-gradient-to-r from-cyan-500/10 to-blue-500/10
-                 hover:from-cyan-500/20 hover:to-blue-500/20
-                 border border-cyan-400/30 hover:border-cyan-400/60
-                 rounded-full backdrop-blur-sm
-                 transition-all duration-300 ease-out
-                 hover:scale-105 hover:shadow-lg hover:shadow-cyan-500/20
-                 active:scale-95"
+      className={`group relative flex-1 px-4 md:px-6 py-3 md:py-3.5
+                 hover:bg-cyan-500/10 transition-all duration-300 ease-out
+                 active:scale-95 ${!isLast ? 'border-r border-cyan-400/20' : ''}`}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center justify-center gap-2 md:gap-3">
         <motion.div
           animate={{ rotate: [0, 5, -5, 0] }}
           transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-          className="text-cyan-400"
+          className="text-cyan-400 flex-shrink-0"
         >
           {icon}
         </motion.div>
 
-        <div className="relative h-6 w-40 overflow-hidden">
+        <div className="relative h-5 md:h-6 w-20 md:w-32 overflow-hidden">
           {hints.map((hint, index) => (
             <motion.span
               key={hint}
@@ -53,75 +46,86 @@ const AnimatedButton = ({ icon, hints, onClick, delay = 0 }: AnimatedButtonProps
                 y: currentHintIndex === index ? 0 : -20,
               }}
               transition={{ duration: 0.5 }}
-              className="absolute left-0 top-0 text-sm font-medium text-cyan-100 whitespace-nowrap"
+              className="absolute left-0 top-0 text-xs md:text-sm font-medium text-cyan-100 whitespace-nowrap"
             >
               {hint}
             </motion.span>
           ))}
         </div>
-
-        <motion.div
-          animate={{ x: [0, 3, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}
-          className="text-cyan-400/50 group-hover:text-cyan-400/80 transition-colors"
-        >
-          →
-        </motion.div>
       </div>
-    </motion.button>
+    </button>
   );
 };
 
 const ActionButtons = () => {
   const talkHints = [
-    'Voice commands',
-    'Speak to AI assistant',
-    'Natural conversation',
-    'Hands-free control',
+    'Voice mode',
+    'Speak now',
+    'Talk to AI',
+    'Voice chat',
   ];
 
   const chatHints = [
-    'Text messaging',
-    'Quick questions',
-    'Get instant help',
-    'Type your queries',
+    'Text chat',
+    'Type here',
+    'Quick help',
+    'Message AI',
   ];
 
   const deployHints = [
-    'Launch your project',
-    'Push to production',
-    'Go live now',
-    'Deploy instantly',
+    'Launch',
+    'Go live',
+    'Deploy now',
+    'Push prod',
   ];
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 1.2, duration: 0.8 }}
-      className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20"
+      className="absolute bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 z-20 px-4"
     >
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
-        <AnimatedButton
-          icon={<Mic size={20} />}
-          hints={talkHints}
-          delay={1.3}
-          onClick={() => console.log('Talk to Nexus clicked')}
+      <div className="relative bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-cyan-500/10
+                      border border-cyan-400/30 hover:border-cyan-400/50
+                      rounded-full backdrop-blur-md
+                      shadow-lg hover:shadow-cyan-500/20
+                      transition-all duration-300 ease-out
+                      overflow-hidden">
+        {/* Animated glow effect */}
+        <motion.div
+          animate={{
+            x: ['-100%', '200%'],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            repeatDelay: 2,
+            ease: 'easeInOut',
+          }}
+          className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent pointer-events-none"
         />
 
-        <AnimatedButton
-          icon={<MessageSquare size={20} />}
-          hints={chatHints}
-          delay={1.5}
-          onClick={() => console.log('Chat to Nexus clicked')}
-        />
+        <div className="relative flex items-center divide-x divide-cyan-400/20">
+          <ButtonSection
+            icon={<Mic size={18} className="md:w-5 md:h-5" />}
+            hints={talkHints}
+            onClick={() => console.log('Talk to Nexus clicked')}
+          />
 
-        <AnimatedButton
-          icon={<Rocket size={20} />}
-          hints={deployHints}
-          delay={1.7}
-          onClick={() => console.log('Deploy clicked')}
-        />
+          <ButtonSection
+            icon={<MessageSquare size={18} className="md:w-5 md:h-5" />}
+            hints={chatHints}
+            onClick={() => console.log('Chat to Nexus clicked')}
+          />
+
+          <ButtonSection
+            icon={<Rocket size={18} className="md:w-5 md:h-5" />}
+            hints={deployHints}
+            onClick={() => console.log('Deploy clicked')}
+            isLast
+          />
+        </div>
       </div>
     </motion.div>
   );
