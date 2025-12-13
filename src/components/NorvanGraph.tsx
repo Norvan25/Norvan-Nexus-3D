@@ -161,12 +161,15 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       });
       const edgeMesh = new THREE.LineSegments(edgeGeo, edgeMat);
 
-      // 3. Inner glowing sphere
+      // 3. Inner bright glowing core sphere
       const sphereGeo = new THREE.SphereGeometry(30, 32, 32);
-      const sphereMat = new THREE.MeshBasicMaterial({
+      const sphereMat = new THREE.MeshPhongMaterial({
         color: 0xffffff,
+        emissive: 0x00ffff,
+        emissiveIntensity: 1.2,
         transparent: true,
-        opacity: 0.8,
+        opacity: 0.95,
+        shininess: 100,
       });
       const sphere = new THREE.Mesh(sphereGeo, sphereMat);
 
@@ -234,6 +237,14 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       });
       const innerStroke = new THREE.LineSegments(innerEdges, innerEdgeMat);
 
+      // 3. Red dots at icosahedron vertices
+      const dotsMat = new THREE.PointsMaterial({
+        color: 0xff3333,
+        size: 4,
+        sizeAttenuation: false,
+      });
+      const dots = new THREE.Points(innerGeo, dotsMat);
+
       // Point light
       const light = new THREE.PointLight(color, 1.5, 120);
 
@@ -241,6 +252,7 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       group.add(outerStroke);
       group.add(innerFace);
       group.add(innerStroke);
+      group.add(dots);
       group.add(light);
     }
 
