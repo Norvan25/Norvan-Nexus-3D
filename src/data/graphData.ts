@@ -240,8 +240,8 @@ export const GRAPH_DATA: { nodes: NodeData[]; links: LinkData[] } = {
       group: "TOOL",
       parent: "NorV",
       label: "NorCRM",
-      tagline: "Self-driving pipeline",
-      strengths: ["Leads → Deals", "Auto-Followup", "30-50% Lift"]
+      tagline: "Relationships, automated.",
+      desc: "Knows who needs attention, what they need, when to act."
     },
     {
       id: "NorVoice",
