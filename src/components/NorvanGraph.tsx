@@ -35,14 +35,14 @@ function createRichTextSprite(text: string, suffixColor: string, scaleFactor: nu
 
     // Create gradient from cyan to blue
     const gradient = context.createLinearGradient(0, 0, canvas.width, 0);
-    gradient.addColorStop(0, '#22d3ee'); // cyan-400
-    gradient.addColorStop(1, '#60a5fa'); // blue-400
+    gradient.addColorStop(0, '#9ee5e7');
+    gradient.addColorStop(1, '#60a5fa');
 
     context.fillStyle = gradient;
     context.fillText(text, 20, height / 2 + 10);
 
     // Add glow effect for better visibility
-    context.shadowColor = '#22d3ee';
+    context.shadowColor = '#9ee5e7';
     context.shadowBlur = 20;
     context.fillText(text, 20, height / 2 + 10);
 
