@@ -100,15 +100,37 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       scene.add(backgroundMesh);
       console.log('Background cage (Pentagon edges) added to scene');
 
-      // Add cross-section lines (center to vertices) with lower opacity
+      // Add cross-section lines on each pentagonal face
       const crossSectionGeometry = new THREE.BufferGeometry();
-      const vertices = backgroundGeometry.attributes.position.array;
+      const positionArray = backgroundGeometry.attributes.position.array;
+      const indexArray = backgroundGeometry.index?.array || [];
       const crossSectionVertices: number[] = [];
 
-      // Create lines from center (0,0,0) to each vertex
-      for (let i = 0; i < vertices.length; i += 3) {
-        crossSectionVertices.push(0, 0, 0); // center point
-        crossSectionVertices.push(vertices[i], vertices[i + 1], vertices[i + 2]); // vertex
+      // Group triangles into faces and add internal lines
+      const faceMap = new Map<string, number[]>();
+
+      // Process each triangle and group by face
+      for (let i = 0; i < indexArray.length; i += 3) {
+        const idx1 = indexArray[i] * 3;
+        const idx2 = indexArray[i + 1] * 3;
+        const idx3 = indexArray[i + 2] * 3;
+
+        // Get the three vertices of this triangle
+        const v1 = [positionArray[idx1], positionArray[idx1 + 1], positionArray[idx1 + 2]];
+        const v2 = [positionArray[idx2], positionArray[idx2 + 1], positionArray[idx2 + 2]];
+        const v3 = [positionArray[idx3], positionArray[idx3 + 1], positionArray[idx3 + 2]];
+
+        // Calculate centroid of this triangle
+        const centroid = [
+          (v1[0] + v2[0] + v3[0]) / 3,
+          (v1[1] + v2[1] + v3[1]) / 3,
+          (v1[2] + v2[2] + v3[2]) / 3,
+        ];
+
+        // Add lines from centroid to each vertex (creates pattern on each face)
+        crossSectionVertices.push(centroid[0], centroid[1], centroid[2], v1[0], v1[1], v1[2]);
+        crossSectionVertices.push(centroid[0], centroid[1], centroid[2], v2[0], v2[1], v2[2]);
+        crossSectionVertices.push(centroid[0], centroid[1], centroid[2], v3[0], v3[1], v3[2]);
       }
 
       crossSectionGeometry.setAttribute(
@@ -125,7 +147,7 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
 
       const crossSectionMesh = new THREE.LineSegments(crossSectionGeometry, crossSectionMaterial);
       scene.add(crossSectionMesh);
-      console.log('Cross-section lines added to background cage');
+      console.log('Cross-section lines added to each pentagonal face');
 
       // Animate the background mesh and cross-section - slow rotation and breathing effect
       let time = 0;
