@@ -11,7 +11,7 @@ export default function BrandHeader() {
     >
       <div className="flex items-center gap-3 px-4 md:px-5 py-2.5 md:py-3 rounded-2xl backdrop-blur-xl bg-white/5 border border-white/10 shadow-2xl">
         <img
-          src="/icons/norvan-logo-line.png"
+          src="/icons/norvan-logo.png"
           alt="Norvan Logo"
           className="h-8 md:h-10 w-auto"
         />
