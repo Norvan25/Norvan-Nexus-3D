@@ -139,19 +139,8 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
 
     // NEXUS - High-detail glowing icosahedron sphere with inner glowing ball
     if (node.group === 'CORE') {
-      // Outer wireframe (30% smaller)
-      const geometry = new THREE.IcosahedronGeometry(31.5, 2);
-      const material = new THREE.MeshPhysicalMaterial({
-        color: 0x00ffff,
-        emissive: 0x00ffff,
-        emissiveIntensity: 0.8,
-        wireframe: true,
-        side: THREE.DoubleSide,
-      });
-      const mesh = new THREE.Mesh(geometry, material);
-
       // Inner glowing ball
-      const innerBallGeo = new THREE.SphereGeometry(20, 32, 32);
+      const innerBallGeo = new THREE.SphereGeometry(18, 32, 32);
       const innerBallMat = new THREE.MeshPhongMaterial({
         color: 0xffffff,
         emissive: 0x00ffff,
@@ -161,11 +150,21 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       });
       const innerBall = new THREE.Mesh(innerBallGeo, innerBallMat);
 
+      // Outer wireframe (thinner, almost touching inner ball)
+      const outerGeo = new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(20, 2));
+      const outerMat = new THREE.LineBasicMaterial({
+        color: 0x00ffff,
+        transparent: true,
+        opacity: 0.8,
+        linewidth: 0.5,
+      });
+      const outerMesh = new THREE.LineSegments(outerGeo, outerMat);
+
       // Point light
       const light = new THREE.PointLight(0x00ffff, 2, 200);
 
-      group.add(mesh);
       group.add(innerBall);
+      group.add(outerMesh);
       group.add(light);
     }
 
@@ -173,17 +172,38 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
     else if (node.group === 'DIMENSION') {
       const color = new THREE.Color(node.color || '#ffffff');
 
-      // A. Outer Cage (Static Dodecahedron)
-      const outerGeo = new THREE.EdgesGeometry(new THREE.DodecahedronGeometry(15, 0));
+      // A. Outer Solid Faces (15% smaller with 15% opacity)
+      const solidGeo = new THREE.DodecahedronGeometry(12.75, 0);
+      const solidMat = new THREE.MeshPhysicalMaterial({
+        color: color,
+        transparent: true,
+        opacity: 0.15,
+        side: THREE.DoubleSide,
+      });
+      const solidMesh = new THREE.Mesh(solidGeo, solidMat);
+      group.add(solidMesh);
+
+      // B. Outer Cage Wires with Glow Effect
+      const outerGeo = new THREE.EdgesGeometry(new THREE.DodecahedronGeometry(12.75, 0));
       const outerMat = new THREE.LineBasicMaterial({
         color: color,
         transparent: true,
-        opacity: 0.6,
+        opacity: 0.9,
       });
       const outerMesh = new THREE.LineSegments(outerGeo, outerMat);
       group.add(outerMesh);
 
-      // B. Inner Core (Rotating Icosahedron)
+      // C. Outer Glow Layer (slightly larger for glow effect)
+      const glowGeo = new THREE.EdgesGeometry(new THREE.DodecahedronGeometry(13.5, 0));
+      const glowMat = new THREE.LineBasicMaterial({
+        color: color,
+        transparent: true,
+        opacity: 0.3,
+      });
+      const glowMesh = new THREE.LineSegments(glowGeo, glowMat);
+      group.add(glowMesh);
+
+      // D. Inner Core (Rotating Icosahedron)
       const innerGeo = new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(8, 0));
       const innerMat = new THREE.LineBasicMaterial({
         color: 0xffffff,
@@ -199,8 +219,8 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       };
       group.add(innerMesh);
 
-      // C. Inner Glow Light
-      const light = new THREE.PointLight(color, 1.5, 30);
+      // E. Inner Glow Light
+      const light = new THREE.PointLight(color, 2, 40);
       group.add(light);
     }
 
