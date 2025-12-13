@@ -12,7 +12,7 @@ export default function BrandHeader() {
       <img
         src="/icons/norvan-logo.png"
         alt="Norvan Logo"
-        className="h-10 md:h-12 w-auto"
+        className="h-12 md:h-14 w-auto"
         style={{
           filter: 'drop-shadow(0 0 12px rgba(34, 211, 238, 0.4)) drop-shadow(0 0 24px rgba(96, 165, 250, 0.3)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))',
         }}
