@@ -23,11 +23,11 @@ const ButtonSection = ({ icon, hints, onClick, isLast }: ButtonSectionProps) => 
   return (
     <button
       onClick={onClick}
-      className={`group relative flex-1 px-4 md:px-6 py-3 md:py-3.5
+      className={`group relative flex-1 px-2 md:px-6 py-3 md:py-3.5
                  hover:bg-cyan-500/10 transition-all duration-300 ease-out
                  active:scale-95 ${!isLast ? 'border-r border-cyan-400/20' : ''}`}
     >
-      <div className="flex items-center justify-center gap-2 md:gap-3">
+      <div className="flex items-center justify-center gap-1.5 md:gap-3">
         <motion.div
           animate={{ rotate: [0, 5, -5, 0] }}
           transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
@@ -36,7 +36,7 @@ const ButtonSection = ({ icon, hints, onClick, isLast }: ButtonSectionProps) => 
           {icon}
         </motion.div>
 
-        <div className="relative h-5 md:h-6 w-20 md:w-32 overflow-hidden">
+        <div className="relative h-5 md:h-6 w-16 md:w-32 overflow-hidden">
           {hints.map((hint, index) => (
             <motion.span
               key={hint}
@@ -84,14 +84,15 @@ const ActionButtons = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 1.2, duration: 0.8 }}
-      className="absolute bottom-6 md:bottom-8 left-1/2 transform -translate-x-1/2 z-20 px-4"
+      className="absolute bottom-6 md:bottom-8 left-0 right-0 z-20 flex justify-center px-2"
     >
       <div className="relative bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-cyan-500/10
                       border border-cyan-400/30 hover:border-cyan-400/50
                       rounded-full backdrop-blur-md
                       shadow-lg hover:shadow-cyan-500/20
                       transition-all duration-300 ease-out
-                      overflow-hidden">
+                      overflow-hidden
+                      w-full max-w-md md:max-w-2xl">
         {/* Animated glow effect */}
         <motion.div
           animate={{
