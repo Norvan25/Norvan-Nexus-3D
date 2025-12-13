@@ -94,23 +94,54 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
         color: 0x00ffff, // Bright cyan for maximum visibility
         transparent: false,
         opacity: 1.0,
+        linewidth: 1.25, // 25% thicker
       });
       const backgroundMesh = new THREE.LineSegments(backgroundEdges, backgroundMaterial);
       scene.add(backgroundMesh);
       console.log('Background cage (Pentagon edges) added to scene');
 
-      // Animate the background mesh - slow rotation and breathing effect
+      // Add cross-section lines (center to vertices) with lower opacity
+      const crossSectionGeometry = new THREE.BufferGeometry();
+      const vertices = backgroundGeometry.attributes.position.array;
+      const crossSectionVertices: number[] = [];
+
+      // Create lines from center (0,0,0) to each vertex
+      for (let i = 0; i < vertices.length; i += 3) {
+        crossSectionVertices.push(0, 0, 0); // center point
+        crossSectionVertices.push(vertices[i], vertices[i + 1], vertices[i + 2]); // vertex
+      }
+
+      crossSectionGeometry.setAttribute(
+        'position',
+        new THREE.Float32BufferAttribute(crossSectionVertices, 3)
+      );
+
+      const crossSectionMaterial = new THREE.LineBasicMaterial({
+        color: 0x00ffff,
+        transparent: true,
+        opacity: 0.7, // Lower opacity than main wires
+        linewidth: 1.25, // Same thickness as main wires
+      });
+
+      const crossSectionMesh = new THREE.LineSegments(crossSectionGeometry, crossSectionMaterial);
+      scene.add(crossSectionMesh);
+      console.log('Cross-section lines added to background cage');
+
+      // Animate the background mesh and cross-section - slow rotation and breathing effect
       let time = 0;
       const animateBackgroundMesh = () => {
         time += 0.01;
 
-        // Slow rotation on two axes
+        // Slow rotation on two axes (apply to both meshes)
         backgroundMesh.rotation.y += 0.0002;
         backgroundMesh.rotation.x += 0.0001;
+        crossSectionMesh.rotation.y += 0.0002;
+        crossSectionMesh.rotation.x += 0.0001;
 
-        // Gentle pulsing/breathing effect
+        // Gentle pulsing/breathing effect (apply to both meshes)
         const scale = 1.0 + Math.sin(time * 0.5) * 0.05;
         backgroundMesh.scale.set(scale, scale, scale);
+        crossSectionMesh.scale.set(scale, scale, scale);
 
         requestAnimationFrame(animateBackgroundMesh);
       };
