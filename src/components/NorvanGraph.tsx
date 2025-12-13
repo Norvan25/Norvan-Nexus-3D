@@ -137,9 +137,10 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
   const createNodeObject = useCallback((node: NodeData) => {
     const group = new THREE.Group();
 
-    // NEXUS - High-detail glowing icosahedron sphere
+    // NEXUS - High-detail glowing icosahedron sphere with inner glowing ball
     if (node.group === 'CORE') {
-      const geometry = new THREE.IcosahedronGeometry(45, 2);
+      // Outer wireframe (30% smaller)
+      const geometry = new THREE.IcosahedronGeometry(31.5, 2);
       const material = new THREE.MeshPhysicalMaterial({
         color: 0x00ffff,
         emissive: 0x00ffff,
@@ -149,10 +150,22 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       });
       const mesh = new THREE.Mesh(geometry, material);
 
+      // Inner glowing ball
+      const innerBallGeo = new THREE.SphereGeometry(20, 32, 32);
+      const innerBallMat = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+        emissive: 0x00ffff,
+        emissiveIntensity: 1.5,
+        transparent: true,
+        opacity: 0.9,
+      });
+      const innerBall = new THREE.Mesh(innerBallGeo, innerBallMat);
+
       // Point light
       const light = new THREE.PointLight(0x00ffff, 2, 200);
 
       group.add(mesh);
+      group.add(innerBall);
       group.add(light);
     }
 
@@ -200,12 +213,12 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       const dimensionColor = parentNode?.color || '#888888';
       const toolColor = new THREE.Color(dimensionColor);
 
-      // A. Outer Sphere (Glass Bubble)
-      const sphereGeo = new THREE.SphereGeometry(6, 16, 16);
+      // A. Outer Sphere (Glass Bubble) - 15% smaller, 3% more opaque
+      const sphereGeo = new THREE.SphereGeometry(5.1, 16, 16);
       const sphereMat = new THREE.MeshPhysicalMaterial({
         color: toolColor,
         transparent: true,
-        opacity: 0.12,
+        opacity: 0.15,
         roughness: 0,
         metalness: 0.1,
         depthWrite: false,
