@@ -1,15 +1,17 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { Mic, MessageSquare, Rocket } from 'lucide-react';
+import { Mic, MessageSquare, Rocket, Phone, PhoneOff } from 'lucide-react';
+import { useElevenLabsAgent } from '../hooks/useElevenLabsAgent';
 
 interface ButtonSectionProps {
   icon: React.ReactNode;
   hints: string[];
   onClick?: () => void;
   isLast?: boolean;
+  isActive?: boolean;
 }
 
-const ButtonSection = ({ icon, hints, onClick, isLast }: ButtonSectionProps) => {
+const ButtonSection = ({ icon, hints, onClick, isLast, isActive }: ButtonSectionProps) => {
   const [currentHintIndex, setCurrentHintIndex] = useState(0);
 
   useEffect(() => {
@@ -25,13 +27,14 @@ const ButtonSection = ({ icon, hints, onClick, isLast }: ButtonSectionProps) => 
       onClick={onClick}
       className={`group relative flex-1 px-2 md:px-6 py-3 md:py-3.5
                  hover:bg-cyan-500/10 transition-all duration-300 ease-out
-                 active:scale-95 ${!isLast ? 'border-r border-cyan-400/20' : ''}`}
+                 active:scale-95 ${!isLast ? 'border-r border-cyan-400/20' : ''}
+                 ${isActive ? 'bg-cyan-500/20' : ''}`}
     >
       <div className="flex items-center justify-center gap-1.5 md:gap-3">
         <motion.div
-          animate={{ rotate: [0, 5, -5, 0] }}
-          transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-          className="text-cyan-400 flex-shrink-0"
+          animate={isActive ? { scale: [1, 1.2, 1] } : { rotate: [0, 5, -5, 0] }}
+          transition={{ duration: 2, repeat: Infinity, repeatDelay: isActive ? 0 : 3 }}
+          className={`flex-shrink-0 ${isActive ? 'text-red-400' : 'text-cyan-400'}`}
         >
           {icon}
         </motion.div>
@@ -58,12 +61,19 @@ const ButtonSection = ({ icon, hints, onClick, isLast }: ButtonSectionProps) => 
 };
 
 const ActionButtons = () => {
-  const talkHints = [
-    'Voice mode',
-    'Speak now',
-    'Talk to AI',
-    'Voice chat',
-  ];
+  const { isConnected, isSpeaking, startConversation, endConversation, error } = useElevenLabsAgent();
+
+  const handleVoiceClick = async () => {
+    if (isConnected) {
+      endConversation();
+    } else {
+      await startConversation();
+    }
+  };
+
+  const talkHints = isConnected
+    ? ['Connected', 'Listening', 'End call', 'Hang up']
+    : ['Voice mode', 'Speak now', 'Talk to AI', 'Voice chat'];
 
   const chatHints = [
     'Text chat',
@@ -80,55 +90,76 @@ const ActionButtons = () => {
   ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 1.2, duration: 0.8 }}
-      className="absolute bottom-6 md:bottom-8 left-0 right-0 z-20 flex justify-center px-2"
-    >
-      <div className="relative bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-cyan-500/10
-                      border border-cyan-400/30 hover:border-cyan-400/50
-                      rounded-full backdrop-blur-md
-                      shadow-lg hover:shadow-cyan-500/20
-                      transition-all duration-300 ease-out
-                      overflow-hidden
-                      w-full max-w-md md:max-w-2xl">
-        {/* Animated glow effect */}
+    <>
+      {error && (
         <motion.div
-          animate={{
-            x: ['-100%', '200%'],
-          }}
-          transition={{
-            duration: 3,
-            repeat: Infinity,
-            repeatDelay: 2,
-            ease: 'easeInOut',
-          }}
-          className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent pointer-events-none"
-        />
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="absolute bottom-24 left-0 right-0 z-20 flex justify-center px-4"
+        >
+          <div className="bg-red-500/20 border border-red-400/50 rounded-lg px-4 py-2 backdrop-blur-md">
+            <p className="text-sm text-red-200">{error}</p>
+          </div>
+        </motion.div>
+      )}
 
-        <div className="relative flex items-center divide-x divide-cyan-400/20">
-          <ButtonSection
-            icon={<Mic size={18} className="md:w-5 md:h-5" />}
-            hints={talkHints}
-            onClick={() => console.log('Talk to Nexus clicked')}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.2, duration: 0.8 }}
+        className="absolute bottom-6 md:bottom-8 left-0 right-0 z-20 flex justify-center px-2"
+      >
+        <div className="relative bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-cyan-500/10
+                        border border-cyan-400/30 hover:border-cyan-400/50
+                        rounded-full backdrop-blur-md
+                        shadow-lg hover:shadow-cyan-500/20
+                        transition-all duration-300 ease-out
+                        overflow-hidden
+                        w-full max-w-md md:max-w-2xl">
+          {/* Animated glow effect */}
+          <motion.div
+            animate={{
+              x: ['-100%', '200%'],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              repeatDelay: 2,
+              ease: 'easeInOut',
+            }}
+            className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent pointer-events-none"
           />
 
-          <ButtonSection
-            icon={<MessageSquare size={18} className="md:w-5 md:h-5" />}
-            hints={chatHints}
-            onClick={() => console.log('Chat to Nexus clicked')}
-          />
+          <div className="relative flex items-center divide-x divide-cyan-400/20">
+            <ButtonSection
+              icon={
+                isConnected ? (
+                  <PhoneOff size={18} className="md:w-5 md:h-5" />
+                ) : (
+                  <Phone size={18} className="md:w-5 md:h-5" />
+                )
+              }
+              hints={talkHints}
+              onClick={handleVoiceClick}
+              isActive={isConnected || isSpeaking}
+            />
 
-          <ButtonSection
-            icon={<Rocket size={18} className="md:w-5 md:h-5" />}
-            hints={deployHints}
-            onClick={() => console.log('Deploy clicked')}
-            isLast
-          />
+            <ButtonSection
+              icon={<MessageSquare size={18} className="md:w-5 md:h-5" />}
+              hints={chatHints}
+              onClick={() => console.log('Chat to Nexus clicked')}
+            />
+
+            <ButtonSection
+              icon={<Rocket size={18} className="md:w-5 md:h-5" />}
+              hints={deployHints}
+              onClick={() => console.log('Deploy clicked')}
+              isLast
+            />
+          </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </>
   );
 };
 
