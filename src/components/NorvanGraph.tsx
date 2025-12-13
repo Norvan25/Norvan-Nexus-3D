@@ -141,8 +141,8 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       const crossSectionMaterial = new THREE.LineBasicMaterial({
         color: 0x00ffff,
         transparent: true,
-        opacity: 0.7, // Lower opacity than main wires
-        linewidth: 1.25, // Same thickness as main wires
+        opacity: 0.27,
+        linewidth: 2,
       });
 
       const crossSectionMesh = new THREE.LineSegments(crossSectionGeometry, crossSectionMaterial);
