@@ -92,9 +92,9 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       const backgroundEdges = new THREE.EdgesGeometry(backgroundGeometry);
       const backgroundMaterial = new THREE.LineBasicMaterial({
         color: 0x00ffff, // Bright cyan for maximum visibility
-        transparent: false,
-        opacity: 1.0,
-        linewidth: 1.25, // 25% thicker
+        transparent: true,
+        opacity: 0.2,
+        linewidth: 1.5625, // 56.25% thicker (1.25 * 1.25)
       });
       const backgroundMesh = new THREE.LineSegments(backgroundEdges, backgroundMaterial);
       scene.add(backgroundMesh);
