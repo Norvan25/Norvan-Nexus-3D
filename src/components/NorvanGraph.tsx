@@ -203,21 +203,26 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       const glowMesh = new THREE.LineSegments(glowGeo, glowMat);
       group.add(glowMesh);
 
-      // D. Inner Core (Rotating Icosahedron)
-      const innerGeo = new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(8, 0));
+      // D. Inner Core (Rotating Icosahedron) - VISIBLE WHITE CORE
+      const innerGeo = new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(9.5, 0));
       const innerMat = new THREE.LineBasicMaterial({
         color: 0xffffff,
         transparent: true,
-        opacity: 0.9,
+        opacity: 1.0,
+        linewidth: 2,
       });
       const innerMesh = new THREE.LineSegments(innerGeo, innerMat);
 
       // Animation Hook - makes it feel "alive"
       innerMesh.onBeforeRender = () => {
-        innerMesh.rotation.x += 0.01;
-        innerMesh.rotation.y += 0.015;
+        innerMesh.rotation.x += 0.015;
+        innerMesh.rotation.y += 0.02;
       };
       group.add(innerMesh);
+
+      // Add bright center light to make icosahedron more visible
+      const centerLight = new THREE.PointLight(0xffffff, 1.5, 30);
+      group.add(centerLight);
 
       // E. Inner Glow Light
       const light = new THREE.PointLight(color, 2, 40);
