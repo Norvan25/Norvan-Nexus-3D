@@ -1,7 +1,17 @@
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
-import { Mic, MessageSquare, Rocket, Phone, PhoneOff } from 'lucide-react';
-import { useElevenLabsAgent } from '../hooks/useElevenLabsAgent';
+import { MessageSquare, Rocket, Phone, PhoneOff } from 'lucide-react';
+
+declare global {
+  interface Window {
+    elevenlabsConvAI?: {
+      widget: {
+        open: () => void;
+        close: () => void;
+      };
+    };
+  }
+}
 
 interface ButtonSectionProps {
   icon: React.ReactNode;
@@ -61,17 +71,21 @@ const ButtonSection = ({ icon, hints, onClick, isLast, isActive }: ButtonSection
 };
 
 const ActionButtons = () => {
-  const { isConnected, isSpeaking, startConversation, endConversation, error } = useElevenLabsAgent();
+  const [isWidgetOpen, setIsWidgetOpen] = useState(false);
 
-  const handleVoiceClick = async () => {
-    if (isConnected) {
-      endConversation();
-    } else {
-      await startConversation();
+  const handleVoiceClick = () => {
+    if (window.elevenlabsConvAI?.widget) {
+      if (isWidgetOpen) {
+        window.elevenlabsConvAI.widget.close();
+        setIsWidgetOpen(false);
+      } else {
+        window.elevenlabsConvAI.widget.open();
+        setIsWidgetOpen(true);
+      }
     }
   };
 
-  const talkHints = isConnected
+  const talkHints = isWidgetOpen
     ? ['Connected', 'Listening', 'End call', 'Hang up']
     : ['Voice mode', 'Speak now', 'Talk to AI', 'Voice chat'];
 
@@ -91,18 +105,6 @@ const ActionButtons = () => {
 
   return (
     <>
-      {error && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="absolute bottom-24 left-0 right-0 z-20 flex justify-center px-4"
-        >
-          <div className="bg-red-500/20 border border-red-400/50 rounded-lg px-4 py-2 backdrop-blur-md">
-            <p className="text-sm text-red-200">{error}</p>
-          </div>
-        </motion.div>
-      )}
-
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -133,7 +135,7 @@ const ActionButtons = () => {
           <div className="relative flex items-center divide-x divide-cyan-400/20">
             <ButtonSection
               icon={
-                isConnected ? (
+                isWidgetOpen ? (
                   <PhoneOff size={18} className="md:w-5 md:h-5" />
                 ) : (
                   <Phone size={18} className="md:w-5 md:h-5" />
@@ -141,7 +143,7 @@ const ActionButtons = () => {
               }
               hints={talkHints}
               onClick={handleVoiceClick}
-              isActive={isConnected || isSpeaking}
+              isActive={isWidgetOpen}
             />
 
             <ButtonSection
