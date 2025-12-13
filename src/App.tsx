@@ -2,6 +2,7 @@ import { useState } from 'react';
 import NorvanGraph from './components/NorvanGraph';
 import HUDCard from './components/HUDCard';
 import BrandHeader from './components/BrandHeader';
+import ActionButtons from './components/ActionButtons';
 import { NodeData } from './data/graphData';
 import { motion } from 'framer-motion';
 
@@ -48,6 +49,9 @@ function App() {
       {selectedNode && (
         <HUDCard node={selectedNode} onClose={handleCloseHUD} />
       )}
+
+      {/* Action Buttons */}
+      <ActionButtons />
     </div>
   );
 }
