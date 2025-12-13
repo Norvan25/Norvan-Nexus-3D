@@ -31,8 +31,9 @@ function App() {
         transition={{ delay: 0.5, duration: 0.8 }}
         className="absolute top-20 md:top-24 left-0 right-0 z-10 flex flex-col items-center text-center px-4"
       >
-        <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-2" style={{ textShadow: '0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.3)' }}>
-          The Brain Behind Norvan
+        <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-2" style={{ textShadow: '0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.3)' }}>
+          <span className="text-white">The Brain Behind </span>
+          <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">NORVAN</span>
         </h1>
         <p className="text-base md:text-xl lg:text-2xl font-light bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent tracking-wide">
           32 interconnected intelligence nodes
@@ -44,7 +45,7 @@ function App() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 1 }}
-        className="absolute top-4 md:top-8 right-4 md:right-8 z-10 text-white/50 md:text-white/60 text-[10px] md:text-xs space-y-0.5 md:space-y-1 font-mono text-right"
+        className="absolute top-4 md:top-6 right-4 md:right-6 z-10 text-white/40 md:text-white/50 text-[9px] md:text-[10px] space-y-0.5 font-mono text-right"
       >
         <p className="hidden md:block">Left Click: Rotate</p>
         <p className="hidden md:block">Right Click: Pan</p>
