@@ -228,12 +228,13 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       });
       const innerFace = new THREE.Mesh(innerGeo, innerFaceMat);
 
-      // Stroke (clean triangle edges)
+      // Stroke (clean triangle edges) - GREEN
       const innerEdges = new THREE.EdgesGeometry(innerGeo);
       const innerEdgeMat = new THREE.LineBasicMaterial({
-        color: 0xffffff,
+        color: 0x00ff00,
         transparent: true,
-        opacity: 0.8,
+        opacity: 1,
+        linewidth: 2,
       });
       const innerStroke = new THREE.LineSegments(innerEdges, innerEdgeMat);
 
