@@ -87,18 +87,17 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       const scene = fgRef.current.scene();
       scene.fog = new THREE.Fog(0x020410, 200, 800);
 
-      // Add "Living Background Mesh" - The Universe (Pentagon structure)
-      const backgroundMeshGeometry = new THREE.DodecahedronGeometry(800, 0);
-      const backgroundMeshMaterial = new THREE.MeshBasicMaterial({
-        color: 0x0a0f1a, // Dark navy/black
-        wireframe: true,
+      // Add "Living Background Mesh" - The Universe Cage (Pure Pentagon Edges)
+      const backgroundGeometry = new THREE.DodecahedronGeometry(800, 0);
+      const backgroundEdges = new THREE.EdgesGeometry(backgroundGeometry);
+      const backgroundMaterial = new THREE.LineBasicMaterial({
+        color: 0x0a1a3a, // Dark blue/black
         transparent: true,
-        opacity: 0.05, // Extremely subtle
-        side: THREE.DoubleSide, // CRITICAL: render from inside the sphere
+        opacity: 0.1,
       });
-      const backgroundMesh = new THREE.Mesh(backgroundMeshGeometry, backgroundMeshMaterial);
+      const backgroundMesh = new THREE.LineSegments(backgroundEdges, backgroundMaterial);
       scene.add(backgroundMesh);
-      console.log('Background mesh (Dodecahedron) added to scene');
+      console.log('Background cage (Pentagon edges) added to scene');
 
       // Animate the background mesh - slow rotation and breathing effect
       let time = 0;
@@ -138,79 +137,114 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
   const createNodeObject = useCallback((node: NodeData) => {
     const group = new THREE.Group();
 
-    // NEXUS - Dodecahedron wireframe with inner glowing sphere
+    // NEXUS - Multi-layer: Transparent face + Clean edges + Inner sphere + Dots
     if (node.group === 'CORE') {
-      // Inner glowing sphere (solid, high emissive)
-      const sphereGeo = new THREE.SphereGeometry(35, 32, 32);
-      const sphereMat = new THREE.MeshPhongMaterial({
-        color: 0xffffff,
-        emissive: 0x00ffff,
-        emissiveIntensity: 0.8,
+      // 1. Solid transparent face (glass-like dodecahedron)
+      const faceGeo = new THREE.DodecahedronGeometry(45, 0);
+      const faceMat = new THREE.MeshPhysicalMaterial({
+        color: 0x00ffff,
         transparent: true,
-        opacity: 0.9,
+        opacity: 0.1,
+        transmission: 0.5,
+        metalness: 0.1,
+        roughness: 0.2,
+      });
+      const faceMesh = new THREE.Mesh(faceGeo, faceMat);
+
+      // 2. The Stroke/Cage (pure pentagon edges)
+      const edgeGeo = new THREE.EdgesGeometry(faceGeo);
+      const edgeMat = new THREE.LineBasicMaterial({
+        color: 0x00ffff,
+        transparent: true,
+        opacity: 1,
+        linewidth: 2,
+      });
+      const edgeMesh = new THREE.LineSegments(edgeGeo, edgeMat);
+
+      // 3. Inner glowing sphere
+      const sphereGeo = new THREE.SphereGeometry(30, 32, 32);
+      const sphereMat = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.8,
       });
       const sphere = new THREE.Mesh(sphereGeo, sphereMat);
 
-      // Outer Dodecahedron wireframe (Pentagon structure, cyan glow)
-      const dodecaGeo = new THREE.DodecahedronGeometry(45, 0);
-      const dodecaMat = new THREE.MeshBasicMaterial({
-        color: 0x00ffff,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.6,
+      // 4. The Dots at vertices
+      const dotsMat = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 3,
+        sizeAttenuation: false,
       });
-      const dodecahedron = new THREE.Mesh(dodecaGeo, dodecaMat);
+      const dots = new THREE.Points(faceGeo, dotsMat);
 
       // Point light
       const light = new THREE.PointLight(0x00ffff, 2, 200);
 
+      group.add(faceMesh);
+      group.add(edgeMesh);
       group.add(sphere);
-      group.add(dodecahedron);
-      group.add(light);
-    }
-
-    // DIMENSIONS - Dual shape: Dodecahedron (outer) + Icosahedron (inner)
-    else if (node.group === 'DIMENSION') {
-      const color = new THREE.Color(node.color || '#ffffff');
-
-      // 1. Outer Dodecahedron shell (Pentagons, node color)
-      const outerGeo = new THREE.DodecahedronGeometry(15, 0);
-      const outerMat = new THREE.MeshBasicMaterial({
-        color: color,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.9,
-      });
-      const outerShell = new THREE.Mesh(outerGeo, outerMat);
-
-      // 2. Inner Icosahedron core (Triangles, white/bright)
-      const innerGeo = new THREE.IcosahedronGeometry(9, 0);
-      const innerMat = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.6,
-      });
-      const innerCore = new THREE.Mesh(innerGeo, innerMat);
-
-      // 3. Dots at vertices (intersection points)
-      const dotsMat = new THREE.PointsMaterial({
-        color: color,
-        size: 3,
-        sizeAttenuation: false,
-      });
-      const dots = new THREE.Points(outerGeo, dotsMat);
-
-      // Point light
-      const light = new THREE.PointLight(color, 1.5, 120);
-
-      group.add(outerShell);
-      group.add(innerCore);
       group.add(dots);
       group.add(light);
     }
 
-    // TOOLS - Pure wireframe Octahedron (strokes only, no faces)
+    // DIMENSIONS - Dual shape: Dodecahedron (outer) + Icosahedron (inner) with clean edges
+    else if (node.group === 'DIMENSION') {
+      const color = new THREE.Color(node.color || '#ffffff');
+
+      // 1. Outer Dodecahedron (Pentagons)
+      const outerGeo = new THREE.DodecahedronGeometry(15, 0);
+
+      // Face (subtle transparent fill)
+      const outerFaceMat = new THREE.MeshBasicMaterial({
+        color: color,
+        transparent: true,
+        opacity: 0.08,
+        side: THREE.DoubleSide,
+      });
+      const outerFace = new THREE.Mesh(outerGeo, outerFaceMat);
+
+      // Stroke (clean pentagon edges)
+      const outerEdges = new THREE.EdgesGeometry(outerGeo);
+      const outerEdgeMat = new THREE.LineBasicMaterial({
+        color: color,
+        transparent: true,
+        opacity: 1,
+      });
+      const outerStroke = new THREE.LineSegments(outerEdges, outerEdgeMat);
+
+      // 2. Inner Icosahedron (Triangles)
+      const innerGeo = new THREE.IcosahedronGeometry(9, 0);
+
+      // Face (subtle transparent fill)
+      const innerFaceMat = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.1,
+        side: THREE.DoubleSide,
+      });
+      const innerFace = new THREE.Mesh(innerGeo, innerFaceMat);
+
+      // Stroke (clean triangle edges)
+      const innerEdges = new THREE.EdgesGeometry(innerGeo);
+      const innerEdgeMat = new THREE.LineBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.8,
+      });
+      const innerStroke = new THREE.LineSegments(innerEdges, innerEdgeMat);
+
+      // Point light
+      const light = new THREE.PointLight(color, 1.5, 120);
+
+      group.add(outerFace);
+      group.add(outerStroke);
+      group.add(innerFace);
+      group.add(innerStroke);
+      group.add(light);
+    }
+
+    // TOOLS - Sphere inside Cage (Icosahedron cage with inner sphere)
     else if (node.group === 'TOOL') {
       // Get parent dimension's color
       const parentNode = node.parent ?
@@ -219,18 +253,27 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       const dimensionColor = parentNode?.color || '#888888';
       const toolColor = new THREE.Color(dimensionColor);
 
-      // Pure wireframe octahedron (strictly wireframe)
-      const geometry = new THREE.OctahedronGeometry(5, 0);
-      const material = new THREE.MeshBasicMaterial({
+      // 1. Outer Cage (clean triangle edges)
+      const cageGeo = new THREE.IcosahedronGeometry(5, 0);
+      const cageEdges = new THREE.EdgesGeometry(cageGeo);
+      const cageMat = new THREE.LineBasicMaterial({
         color: toolColor,
-        wireframe: true,
         transparent: true,
-        opacity: 0.8,
+        opacity: 0.9,
       });
+      const cage = new THREE.LineSegments(cageEdges, cageMat);
 
-      const wireframe = new THREE.Mesh(geometry, material);
+      // 2. Inner Sphere (subtle transparent fill)
+      const sphereGeo = new THREE.SphereGeometry(3, 16, 16);
+      const sphereMat = new THREE.MeshBasicMaterial({
+        color: toolColor,
+        transparent: true,
+        opacity: 0.15,
+      });
+      const sphere = new THREE.Mesh(sphereGeo, sphereMat);
 
-      group.add(wireframe);
+      group.add(cage);
+      group.add(sphere);
     }
 
     // STATES - Dark red pulsing spheres
@@ -286,7 +329,7 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
     if (node.group === 'TOOL') {
       const animate = () => {
         group.children.forEach(child => {
-          if (child instanceof THREE.Mesh) {
+          if (child instanceof THREE.Mesh || child instanceof THREE.LineSegments) {
             child.rotation.x += 0.002;
             child.rotation.y += 0.003;
           }
