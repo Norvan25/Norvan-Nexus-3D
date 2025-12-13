@@ -56,12 +56,16 @@ export const useElevenLabsAgent = (): UseElevenLabsAgentReturn => {
       }
 
       const response = await fetch(
-        `https://api.elevenlabs.io/v1/convai/conversation/get_signed_url?agent_id=${agentId}`,
+        `https://api.elevenlabs.io/v1/convai/conversation/get_signed_url`,
         {
-          method: 'GET',
+          method: 'POST',
           headers: {
             'xi-api-key': apiKey,
+            'Content-Type': 'application/json',
           },
+          body: JSON.stringify({
+            agent_id: agentId,
+          }),
         }
       );
 
