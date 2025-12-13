@@ -44,7 +44,7 @@ function App() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1, duration: 1 }}
-        className="absolute top-4 md:top-8 right-4 md:right-8 z-10 text-white/30 md:text-white/40 text-[10px] md:text-xs space-y-0.5 md:space-y-1 font-mono text-right"
+        className="absolute top-4 md:top-8 right-4 md:right-8 z-10 text-white/50 md:text-white/60 text-[10px] md:text-xs space-y-0.5 md:space-y-1 font-mono text-right"
       >
         <p className="hidden md:block">Left Click: Rotate</p>
         <p className="hidden md:block">Right Click: Pan</p>
