@@ -25,6 +25,21 @@ function App() {
       {/* Brand Header */}
       <BrandHeader />
 
+      {/* Main Header */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5, duration: 0.8 }}
+        className="absolute top-20 md:top-24 left-0 right-0 z-10 flex flex-col items-center text-center px-4"
+      >
+        <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-cyan-400 via-blue-400 to-cyan-300 bg-clip-text text-transparent mb-2">
+          The Brain Behind Norvan
+        </h1>
+        <p className="text-sm md:text-base lg:text-lg text-cyan-200/70 font-light">
+          32 interconnected intelligence nodes
+        </p>
+      </motion.div>
+
       {/* Instructions */}
       <motion.div
         initial={{ opacity: 0 }}
