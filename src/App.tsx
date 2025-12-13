@@ -34,7 +34,7 @@ function App() {
         <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-2" style={{ textShadow: '0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.3)' }}>
           The Brain Behind Norvan
         </h1>
-        <p className="text-base md:text-xl lg:text-2xl text-white font-medium">
+        <p className="text-base md:text-xl lg:text-2xl font-light bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent tracking-wide">
           32 interconnected intelligence nodes
         </p>
       </motion.div>
