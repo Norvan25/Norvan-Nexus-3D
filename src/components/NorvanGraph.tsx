@@ -88,12 +88,12 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       scene.fog = new THREE.Fog(0x020410, 200, 800);
 
       // Add "Living Background Mesh" - The Universe Cage (Pure Pentagon Edges)
-      const backgroundGeometry = new THREE.DodecahedronGeometry(800, 0);
+      const backgroundGeometry = new THREE.DodecahedronGeometry(500, 0);
       const backgroundEdges = new THREE.EdgesGeometry(backgroundGeometry);
       const backgroundMaterial = new THREE.LineBasicMaterial({
-        color: 0x4488ff, // Bright blue for visibility
-        transparent: true,
-        opacity: 0.4,
+        color: 0x00ffff, // Bright cyan for maximum visibility
+        transparent: false,
+        opacity: 1.0,
       });
       const backgroundMesh = new THREE.LineSegments(backgroundEdges, backgroundMaterial);
       scene.add(backgroundMesh);
