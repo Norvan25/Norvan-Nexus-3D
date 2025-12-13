@@ -8,45 +8,74 @@ interface NorvanGraphProps {
 }
 
 // Create a rich text sprite with split coloring (Nor = white, suffix = colored)
-function createRichTextSprite(text: string, suffixColor: string, scaleFactor: number): THREE.Sprite {
+function createRichTextSprite(text: string, suffixColor: string, scaleFactor: number, isNexus: boolean = false): THREE.Sprite {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d')!;
 
-  // Use high resolution canvas for crisp text (60px font)
-  const highResFontSize = 60;
-  const fontWeight = '700';
+  // Use high resolution canvas for crisp text (60px font, 120px for NEXUS)
+  const highResFontSize = isNexus ? 120 : 60;
+  const fontWeight = isNexus ? '300' : '700'; // Light weight for NEXUS
   const fontFamily = 'Arial, sans-serif';
   const font = `${fontWeight} ${highResFontSize}px ${fontFamily}`;
   context.font = font;
 
-  // Split text into "Nor" prefix and suffix
-  const prefix = text.startsWith('Nor') ? 'Nor' : '';
-  const suffix = text.startsWith('Nor') ? text.slice(3) : text;
+  // For NEXUS, use full text with gradient
+  if (isNexus) {
+    const textWidth = context.measureText(text).width;
+    const height = highResFontSize * 1.5;
 
-  const prefixWidth = prefix ? context.measureText(prefix).width : 0;
-  const suffixWidth = suffix ? context.measureText(suffix).width : 0;
-  const totalWidth = prefixWidth + suffixWidth;
-  const height = highResFontSize * 1.5;
+    // Set canvas size with padding
+    canvas.width = textWidth + 40;
+    canvas.height = height + 20;
 
-  // Set canvas size with padding
-  canvas.width = totalWidth + 20;
-  canvas.height = height + 10;
+    // Reset font after canvas resize
+    context.font = font;
+    context.textBaseline = 'middle';
+    context.textAlign = 'left';
 
-  // Reset font after canvas resize (resize clears context)
-  context.font = font;
-  context.textBaseline = 'middle';
-  context.textAlign = 'left';
+    // Create gradient from cyan to blue
+    const gradient = context.createLinearGradient(0, 0, canvas.width, 0);
+    gradient.addColorStop(0, '#22d3ee'); // cyan-400
+    gradient.addColorStop(1, '#60a5fa'); // blue-400
 
-  // Draw prefix in white
-  if (prefix) {
-    context.fillStyle = '#ffffff';
-    context.fillText(prefix, 10, height / 2 + 5);
-  }
+    context.fillStyle = gradient;
+    context.fillText(text, 20, height / 2 + 10);
 
-  // Draw suffix in dimension color
-  if (suffix) {
-    context.fillStyle = suffixColor;
-    context.fillText(suffix, 10 + prefixWidth, height / 2 + 5);
+    // Add glow effect for better visibility
+    context.shadowColor = '#22d3ee';
+    context.shadowBlur = 20;
+    context.fillText(text, 20, height / 2 + 10);
+
+  } else {
+    // Split text into "Nor" prefix and suffix
+    const prefix = text.startsWith('Nor') ? 'Nor' : '';
+    const suffix = text.startsWith('Nor') ? text.slice(3) : text;
+
+    const prefixWidth = prefix ? context.measureText(prefix).width : 0;
+    const suffixWidth = suffix ? context.measureText(suffix).width : 0;
+    const totalWidth = prefixWidth + suffixWidth;
+    const height = highResFontSize * 1.5;
+
+    // Set canvas size with padding
+    canvas.width = totalWidth + 20;
+    canvas.height = height + 10;
+
+    // Reset font after canvas resize (resize clears context)
+    context.font = font;
+    context.textBaseline = 'middle';
+    context.textAlign = 'left';
+
+    // Draw prefix in white
+    if (prefix) {
+      context.fillStyle = '#ffffff';
+      context.fillText(prefix, 10, height / 2 + 5);
+    }
+
+    // Draw suffix in dimension color
+    if (suffix) {
+      context.fillStyle = suffixColor;
+      context.fillText(suffix, 10 + prefixWidth, height / 2 + 5);
+    }
   }
 
   // Create texture from canvas
@@ -361,8 +390,11 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
 
     // Add floating label below the node (clean positioning, no overlap)
     let labelColor = '#ffffff';
+    let isNexus = false;
 
-    if (node.group === 'DIMENSION') {
+    if (node.group === 'CORE') {
+      isNexus = true;
+    } else if (node.group === 'DIMENSION') {
       labelColor = node.color || '#ffffff';
     } else if (node.group === 'TOOL') {
       // Get parent dimension's color for tool labels
@@ -371,9 +403,9 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       labelColor = parentNode?.color || '#888888';
     }
 
-    const label = createRichTextSprite(node.label, labelColor, 14.12);
+    const label = createRichTextSprite(node.label, labelColor, isNexus ? 8 : 14.12, isNexus);
     label.center.set(0.5, 1);
-    label.position.y = -17;
+    label.position.y = isNexus ? -35 : -17;
 
     group.add(label);
 

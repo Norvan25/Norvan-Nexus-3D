@@ -15,10 +15,6 @@ export default function BrandHeader() {
           alt="Norvan Logo"
           className="h-8 md:h-10 w-auto"
         />
-
-        <span className="text-xl md:text-2xl font-light bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent tracking-wide">
-          NEXUS
-        </span>
       </div>
     </motion.div>
   );
