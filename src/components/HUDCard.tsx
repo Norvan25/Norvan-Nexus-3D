@@ -99,51 +99,7 @@ export default function HUDCard({ node, onClose }: HUDCardProps) {
               <X className="w-4 h-4 text-white" />
             </button>
 
-            {node.id === 'NorCRM' ? (
-              /* CUSTOM NorCRM Layout */
-              <div className="p-5 text-left" style={{
-                backgroundColor: '#132238',
-                border: '1px solid rgba(102, 211, 250, 0.3)',
-                borderRadius: '8px',
-                maxWidth: '320px'
-              }}>
-                {/* Title */}
-                <h2 className="mb-2" style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontWeight: 600,
-                  fontSize: '18px',
-                  color: '#66D3FA'
-                }}>
-                  {node.label}
-                </h2>
-
-                {/* Tagline */}
-                {node.tagline && (
-                  <p className="mb-3" style={{
-                    fontFamily: 'Poppins, sans-serif',
-                    fontWeight: 300,
-                    fontStyle: 'italic',
-                    fontSize: '14px',
-                    color: 'rgba(255, 255, 255, 0.7)'
-                  }}>
-                    {node.tagline}
-                  </p>
-                )}
-
-                {/* Description */}
-                {node.desc && (
-                  <p style={{
-                    fontFamily: 'Poppins, sans-serif',
-                    fontWeight: 400,
-                    fontSize: '14px',
-                    color: 'white',
-                    lineHeight: '1.5'
-                  }}>
-                    {node.desc}
-                  </p>
-                )}
-              </div>
-            ) : node.group === 'DIMENSION' ? (
+            {node.group === 'DIMENSION' ? (
               /* DIMENSION Layout */
               <div className="p-6 pl-8 text-left">
                 {/* Header */}
@@ -273,51 +229,7 @@ export default function HUDCard({ node, onClose }: HUDCardProps) {
               <X className="w-5 h-5 text-white" />
             </button>
 
-            {node.id === 'NorCRM' ? (
-              /* CUSTOM NorCRM Layout */
-              <div className="p-5 text-left" style={{
-                backgroundColor: '#132238',
-                border: '1px solid rgba(102, 211, 250, 0.3)',
-                borderRadius: '8px',
-                maxWidth: '320px'
-              }}>
-                {/* Title */}
-                <h2 className="mb-2" style={{
-                  fontFamily: 'Poppins, sans-serif',
-                  fontWeight: 600,
-                  fontSize: '18px',
-                  color: '#66D3FA'
-                }}>
-                  {node.label}
-                </h2>
-
-                {/* Tagline */}
-                {node.tagline && (
-                  <p className="mb-3" style={{
-                    fontFamily: 'Poppins, sans-serif',
-                    fontWeight: 300,
-                    fontStyle: 'italic',
-                    fontSize: '14px',
-                    color: 'rgba(255, 255, 255, 0.7)'
-                  }}>
-                    {node.tagline}
-                  </p>
-                )}
-
-                {/* Description */}
-                {node.desc && (
-                  <p style={{
-                    fontFamily: 'Poppins, sans-serif',
-                    fontWeight: 400,
-                    fontSize: '14px',
-                    color: 'white',
-                    lineHeight: '1.5'
-                  }}>
-                    {node.desc}
-                  </p>
-                )}
-              </div>
-            ) : node.group === 'DIMENSION' ? (
+            {node.group === 'DIMENSION' ? (
               /* DIMENSION Layout */
               <div className="p-5 pl-7 text-left">
                 {/* Header */}
