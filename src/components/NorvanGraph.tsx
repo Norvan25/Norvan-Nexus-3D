@@ -91,9 +91,9 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       const backgroundGeometry = new THREE.DodecahedronGeometry(800, 0);
       const backgroundEdges = new THREE.EdgesGeometry(backgroundGeometry);
       const backgroundMaterial = new THREE.LineBasicMaterial({
-        color: 0x0a1a3a, // Dark blue/black
+        color: 0x4488ff, // Bright blue for visibility
         transparent: true,
-        opacity: 0.1,
+        opacity: 0.4,
       });
       const backgroundMesh = new THREE.LineSegments(backgroundEdges, backgroundMaterial);
       scene.add(backgroundMesh);
@@ -203,25 +203,38 @@ export default function NorvanGraph({ onNodeClick }: NorvanGraphProps) {
       const glowMesh = new THREE.LineSegments(glowGeo, glowMat);
       group.add(glowMesh);
 
-      // D. Inner Core (Rotating Icosahedron) - VISIBLE WHITE CORE
-      const innerGeo = new THREE.EdgesGeometry(new THREE.IcosahedronGeometry(9.5, 0));
-      const innerMat = new THREE.LineBasicMaterial({
+      // D. Inner Core (Rotating Icosahedron) - BRIGHT WHITE SOLID CORE
+      const innerSolidGeo = new THREE.IcosahedronGeometry(8, 0);
+      const innerSolidMat = new THREE.MeshBasicMaterial({
         color: 0xffffff,
         transparent: true,
-        opacity: 1.0,
-        linewidth: 2,
+        opacity: 0.9,
+        wireframe: true,
       });
-      const innerMesh = new THREE.LineSegments(innerGeo, innerMat);
+      const innerSolidMesh = new THREE.Mesh(innerSolidGeo, innerSolidMat);
+
+      // Also add wireframe edges for extra definition
+      const innerEdgesGeo = new THREE.EdgesGeometry(innerSolidGeo);
+      const innerEdgesMat = new THREE.LineBasicMaterial({
+        color: 0xffffff,
+        transparent: false,
+      });
+      const innerEdgesMesh = new THREE.LineSegments(innerEdgesGeo, innerEdgesMat);
 
       // Animation Hook - makes it feel "alive"
-      innerMesh.onBeforeRender = () => {
-        innerMesh.rotation.x += 0.015;
-        innerMesh.rotation.y += 0.02;
+      const animateInner = () => {
+        innerSolidMesh.rotation.x += 0.015;
+        innerSolidMesh.rotation.y += 0.02;
+        innerEdgesMesh.rotation.x += 0.015;
+        innerEdgesMesh.rotation.y += 0.02;
       };
-      group.add(innerMesh);
+      innerSolidMesh.onBeforeRender = animateInner;
+
+      group.add(innerSolidMesh);
+      group.add(innerEdgesMesh);
 
       // Add bright center light to make icosahedron more visible
-      const centerLight = new THREE.PointLight(0xffffff, 1.5, 30);
+      const centerLight = new THREE.PointLight(0xffffff, 3, 50);
       group.add(centerLight);
 
       // E. Inner Glow Light
